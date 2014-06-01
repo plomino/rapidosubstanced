@@ -1,0 +1,69 @@
+<configure xmlns="http://pylonshq.com/pyramid">
+
+  <include package="pyramid_zcml" />
+
+  <include package="zope.component" />
+  <include package="rapido.core" />
+  <include package="rapido.souper" />
+
+  <adapter
+      for="zope.annotation.interfaces.IAttributeAnnotatable"
+      provides="zope.annotation.interfaces.IAnnotations"
+      factory="zope.annotation.attribute.AttributeAnnotations"
+      />
+
+  <adapter
+      for="substanced.interfaces.IRoot"
+      provides="zope.annotation.interfaces.IAnnotations"
+      factory="zope.annotation.attribute.AttributeAnnotations"
+      />
+
+  <adapter
+    for="rapido.core.interfaces.IDatabasable"
+    provides="rapido.core.interfaces.IDatabase"
+    factory="rapido.core.database.Database"
+  />
+
+  <adapter
+    for="rapido.core.interfaces.IFormable"
+    provides="rapido.core.interfaces.IForm"
+    factory="rapido.core.form.Form"
+  />
+  
+  <adapter
+    for="rapido.core.interfaces.IACLable"
+    provides="rapido.core.interfaces.IAccessControlList"
+    factory="rapido.core.security.AccessControlList"
+  />
+
+  <adapter
+    for="rapido.core.interfaces.IDatabasable"
+    provides="rapido.core.interfaces.IStorage"
+    factory="rapido.souper.soup.SoupStorage"
+  />
+
+  <adapter
+    for="souper.interfaces.IRecord
+         rapido.core.interfaces.IDatabase"
+    provides="rapido.core.interfaces.IRecordable"
+    factory="rapido.souper.document.DocumentRecord"
+  />
+
+  <adapter
+    for="*"
+    provides="souper.interfaces.IStorageLocator" 
+    factory="rapido.souper.locator.StorageLocator" 
+  />
+
+  <adapter
+    for="rapido.core.interfaces.IExportable"
+    provides="rapido.core.interfaces.IExporter"
+    factory="rapido.core.importexport.Exporter"
+  />
+
+  <adapter
+    for="rapido.core.interfaces.IImportable"
+    provides="rapido.core.interfaces.IImporter"
+    factory="rapido.core.importexport.Importer"
+  />
+</configure>
