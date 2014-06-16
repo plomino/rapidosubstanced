@@ -1,7 +1,9 @@
 import colander
 import deform.widget
-from pyramid.threadlocal import get_current_request
 from persistent import Persistent
+
+from pyramid.threadlocal import get_current_request
+from pyramid.traversal import resource_path
 
 from substanced.content import content
 from substanced.property import PropertySheet
@@ -10,6 +12,7 @@ from substanced.schema import (
     NameSchemaNode
     )
 from substanced.util import renamer, set_oid, get_oid
+from substanced.util import find_catalog
 from substanced.folder import Folder
 
 from zope.interface import implements
@@ -47,6 +50,10 @@ class Form(Persistent):
     def __init__(self, id, title=''):
         self.id = id
         self.title = title
+
+    @property
+    def path(self):
+        return resource_path(self)
 
 
 def context_is_a_database(context, request):
@@ -105,5 +112,17 @@ class Database(Folder):
         return get_oid(self)
 
     @property
+    def path(self):
+        return resource_path(self)
+
+    @property
     def root(self):
         return self.__parent__
+
+    @property
+    def forms(self):
+        catalog = find_catalog(self, 'system')
+        content_type = catalog['content_type']
+        path = catalog['path']
+        q = content_type.eq('Form') & path.eq(self.path)
+        return q.execute()
