@@ -57,19 +57,21 @@ def get_document(context, request):
         docid = path[-2]
         doc = IDatabase(context).get_document(docid)
         doc.save(request.params)
+        return HTTPFound(
+            location=doc.url
+            )
 
     else:
         docid = path[-1]
         doc = IDatabase(context).get_document(docid)
-
-    return render_to_response(
-        "templates/opendocument.pt",
-        {
-            'title': doc.title,
-            'body': doc.display(),
-            'master': get_renderer('templates/master.pt').implementation(),
-        },
-        request)
+        return render_to_response(
+            "templates/opendocument.pt",
+            {
+                'title': doc.title,
+                'body': doc.display(),
+                'master': get_renderer('templates/master.pt').implementation(),
+            },
+            request)
 
 #
 #   "Retail" view for forms.
