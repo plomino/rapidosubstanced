@@ -63,13 +63,16 @@ class ImportExportView(FormView):
     buttons = ('import',)
 
     def import_success(self, data):
+        """TODO: import a zip file
+        For now, we use a json like this:
+        {"forms": {"frmBook": {"frmBook.html": "Author: <span data-rapido-field='author'>author</span>", "frmBook.yaml": "assigned_rules: [polite]\nfields:\n  author: {index_type: text, type: TEXT}\n  famous_quote: {mode: COMPUTED_ON_SAVE, type: TEXT}\n  forever: {mode: COMPUTED_ON_CREATION, type: TEXT}\nid: frmBook\ntitle: Book form\n", "frmBook.py": "\ndef forever(context):\n    return 'I will never change.'"}}, "settings.yaml": "acl:\n  rights:\n    author: [FamousDiscoverers]\n    editor: []\n    manager: [admin]\n    reader: []\n  roles: {}\n"}
+        """
         db = IDatabase(self.context)
         importer = IImporter(db)
         importer.import_database(json.loads(data['json_design']))
         return HTTPFound(
             location=self.request.sdiapi.mgmt_path(self.context, '@@contents')
             )
-
 
 @mgmt_view(
     content_type='Database',
@@ -92,3 +95,13 @@ class AddFormView(FormView):
         return HTTPFound(
             self.request.sdiapi.mgmt_path(self.context, '@@contents')
             )
+
+@mgmt_view(
+    content_type='Database',
+    name="view",
+    tab_title="View",
+    permission='sdi.read'
+    )
+def redirect_to_view(context, request):
+    return HTTPFound(context.path+'/@@opendatabase')
+

@@ -25,6 +25,12 @@
   />
 
   <adapter
+    for="rapido.core.interfaces.IRecordable"
+    provides="rapido.core.interfaces.IDocument"
+    factory="rapido.core.document.Document"
+  />
+
+  <adapter
     for="rapido.core.interfaces.IFormable"
     provides="rapido.core.interfaces.IForm"
     factory="rapido.core.form.Form"

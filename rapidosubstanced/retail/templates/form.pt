@@ -6,7 +6,7 @@
 <body>
  <h1 metal:fill-slot="body-title">${title}</h1>
  <div metal:fill-slot="body-content">
-    <form action="create" method="POST" name="${id}">
+    <form action="@@create" method="POST" name="${id}">
         <input type="hidden" name="Form"
             value="${id}" />
         <tal:layout tal:content="structure layout">layout</tal:layout>

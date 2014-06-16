@@ -115,6 +115,10 @@ class Database(Folder):
     def path(self):
         return resource_path(self)
 
+    def url(self):
+        request = get_current_request()
+        return request.resource_url(self)[:-1]
+
     @property
     def root(self):
         return self.__parent__

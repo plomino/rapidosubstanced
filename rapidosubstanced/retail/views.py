@@ -1,7 +1,8 @@
-from pyramid.renderers import get_renderer
+from pyramid.renderers import get_renderer, render_to_response
 from pyramid.view import view_config
+from pyramid.httpexceptions import HTTPFound
 
-from rapido.core.interfaces import IForm
+from rapido.core.interfaces import IForm, IDatabase
 
 from ..resources import Database, Form
 
@@ -32,6 +33,30 @@ def database_view(context, request):
         'master': get_renderer('templates/master.pt').implementation(),
         }
 
+@view_config(
+    context=Database,
+    name="document",
+    )
+def get_document(context, request):
+    path = request.path.split('/')
+    if path[-1] == 'edit':
+        docid = path[-2]
+    elif path[-1] == 'save':
+        docid = path[-2]
+    else:
+        docid = path[-1]
+    doc = IDatabase(context).get_document(docid)
+    return render_to_response(
+        "templates/opendocument.pt",
+        {
+            'title': doc.title,
+            'body': doc.display(),
+            'master': get_renderer('templates/master.pt').implementation(),
+        },
+        request)
+
+
+
 #
 #   "Retail" view for forms.
 #
@@ -50,3 +75,16 @@ def form_view(context, request):
         'master': get_renderer('templates/master.pt').implementation(),
         }
 
+@view_config(
+    context=Form,
+    name="create",
+    request_method="POST",
+    )
+def create(context, request):
+    form = IForm(context)
+    doc = form.database.create_document()
+    doc.set_item('Form', form.id)
+    doc.save(request.params, form=form, creation=True)
+    return HTTPFound(
+        location=doc.url
+        )
