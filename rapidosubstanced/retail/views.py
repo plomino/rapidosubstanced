@@ -41,11 +41,27 @@ def get_document(context, request):
     path = request.path.split('/')
     if path[-1] == 'edit':
         docid = path[-2]
+        doc = IDatabase(context).get_document(docid)
+        return render_to_response(
+            "templates/editdocument.pt",
+            {
+                'title': doc.title,
+                'body': doc.display(edit=True),
+                'save_url': doc.url + '/save',
+                'formid': doc.form.id,
+                'master': get_renderer('templates/master.pt').implementation(),
+            },
+            request)
+
     elif path[-1] == 'save':
         docid = path[-2]
+        doc = IDatabase(context).get_document(docid)
+        doc.save(request.params)
+
     else:
         docid = path[-1]
-    doc = IDatabase(context).get_document(docid)
+        doc = IDatabase(context).get_document(docid)
+
     return render_to_response(
         "templates/opendocument.pt",
         {
@@ -54,8 +70,6 @@ def get_document(context, request):
             'master': get_renderer('templates/master.pt').implementation(),
         },
         request)
-
-
 
 #
 #   "Retail" view for forms.

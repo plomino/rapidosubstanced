@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      metal:use-macro="master">
+<head>
+ <title metal:fill-slot="head-title">${title}</title>
+</head>
+<body>
+ <h1 metal:fill-slot="body-title">${title}</h1>
+ <div metal:fill-slot="body-content">
+    <form method="POST" name="${formid}"
+        action="${save_url}">
+      <input type="hidden" name="Form" value="${formid}" />
+      <tal:body tal:content="structure body">body</tal:body>
+      <input type="submit" i18n:attributes="value" value="Save" />
+    </form>
+ </div>
+</body>
+</html>
